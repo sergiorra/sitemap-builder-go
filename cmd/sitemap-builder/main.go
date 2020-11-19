@@ -19,7 +19,7 @@ func main() {
 		Xmlns: builder.Xmlns,
 	}
 	for _, page := range pages {
-		toXml.Urls = append(toXml.Urls, builder.Loc{page})
+		toXml.Urls = append(toXml.Urls, builder.Loc{Value: page})
 	}
 
 	fmt.Print(xml.Header)

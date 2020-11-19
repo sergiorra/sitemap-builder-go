@@ -9,15 +9,6 @@ import (
 	"github.com/sergiorra/sitemap-builder-go/internal/parser"
 )
 
-/*
-   1. GET the webpage
-   2. parse all the links on the page
-   3. build proper urls with our links
-   4. filter out any links w/ a diff domain
-   5. Find all pages (BFS)
-   6. print out XML
-*/
-
 const Xmlns = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 type Loc struct {
@@ -31,6 +22,7 @@ type Urlset struct {
 
 type empty struct{}
 
+// Bfs searches all non-repeated pages within a max depth using the Breadth-First Search algorithm
 func Bfs(urlStr string, maxDepth int) []string {
 	seen := make(map[string]empty)
 	var q map[string]empty
@@ -59,6 +51,7 @@ func Bfs(urlStr string, maxDepth int) []string {
 	return ret
 }
 
+// get fetches the data from an URL and returns all the links founded
 func get(urlStr string) []string {
 	resp, err := http.Get(urlStr)
 	if err != nil {
@@ -74,6 +67,7 @@ func get(urlStr string) []string {
 	return filter(hrefs(resp.Body, base), withPrefix(base))
 }
 
+// hrefs parses an HTML document and returns all formatted links in the HTML
 func hrefs(r io.Reader, base string) []string {
 	links, _ := parser.Parse(r)
 	var ret []string
@@ -88,6 +82,7 @@ func hrefs(r io.Reader, base string) []string {
 	return ret
 }
 
+// filter filters all the links that meet the function received
 func filter(links []string, keepFn func(string) bool) []string {
 	var ret []string
 	for _, link := range links {
@@ -98,6 +93,7 @@ func filter(links []string, keepFn func(string) bool) []string {
 	return ret
 }
 
+// withPrefix checks that a link has a certain prefix using a closure to be more flexible
 func withPrefix(pfx string) func(string) bool {
 	return func(link string) bool {
 		return strings.HasPrefix(link, pfx)
