@@ -34,7 +34,7 @@ func Bfs(urlStr string, maxDepth int) []string {
 		if len(q) == 0 {
 			break
 		}
-		for url := range q {
+		for url, _ := range q {
 			if _, ok := seen[url]; ok {
 				continue
 			}
